@@ -18,15 +18,14 @@ class Database:
         self.dbname = consts.DATABASE_NAME
         self.conn = None
 
-    def db_setup(self):
+    def _db_setup(self):
         """Set up the postgres database."""
         self.get_connection()
-        sql_file = open(consts.DATABASE_TABELS_SETUP_FILE, 'r')
+        sql_file = open(consts.DATABASE_TABLES_SETUP_FILE, 'r')
         with self.conn.cursor() as cur:
             cur.execute(sql_file.read())
             self.conn.commit()
-            cur.close()
-        logger.info(f'The script {consts.DATABASE_TABELS_SETUP_FILE} has run.')
+        logger.info(f'The script {consts.DATABASE_TABLES_SETUP_FILE} has run.')
 
     def connect(self):
         """Connect to a Postgres database."""
@@ -47,7 +46,7 @@ class Database:
         """Returning connection item if None is exist"""
         if self.conn.closed != 0:
             self.connect()
-        logger.debug(f'The connection object is: {self.conn}')
+        logger.debug(f'The connection object is: {self.conn}.')
         return self.conn
 
     def select_rows(self, query):
@@ -56,7 +55,6 @@ class Database:
         with self.conn.cursor() as cur:
             cur.execute(query)
             records = [row for row in cur.fetchall()]
-            cur.close()
             return records
 
     def select_rows_dict_cursor(self, query):
@@ -65,40 +63,57 @@ class Database:
         with self.conn.cursor(cursor_factory=DictCursor) as cur:
             cur.execute(query)
             records = cur.fetchall()
-            cur.close()
             return records
 
-    def update_rows(self, query):
+    def _update_rows(self, query):
         """Run a SQL query to update rows in table."""
         self.get_connection()
         with self.conn.cursor() as cur:
             cur.execute(query)
             self.conn.commit()
-            cur.close()
             logger.info(f"{cur.rowcount} rows affected.")
 
-    def insert_into_table(self, query, vars):
+    def _insert_into_table(self, query, vars):
         """Run a SQL query to insert rows in table."""
         self.get_connection()
         with self.conn.cursor() as cur:
             cur.execute(query, vars)
             self.conn.commit()
-            cur.close()
             logger.info(f"{cur.rowcount} rows affected.")
 
-    def add_user(self, vars):
+    def add_user(self, user_email, user_password):
         """Run a INSERT query to insert new user"""
-        # getting 2 values(email, password) in tuple form
+        # getting 2 values(email, password) and forming them into a tuple.
+        vars = (user_email, user_password)
         insert_command = "INSERT INTO users (email, password) VALUES (%s, %s)"
-        self.insert_into_table(insert_command, vars)
-        logger.debug(f'Query is: {insert_command}, the vars are{vars}')
+        self._insert_into_table(insert_command, vars)
+        logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
 
-    def add_item(self, vars):
+    def add_item(self, item_title, item_price, lowest_price):
         """Run a INSERT query to insert new item"""
-        # getting 3 values(title, price, lowest) in tuple form
+        # getting 3 values(title, price, lowest) and forming them into a tuple.
+        vars = (item_title, item_price, lowest_price)
         insert_command = "INSERT INTO items (title, price, lowest) VALUES (%s, %s, %s)"
-        self.insert_into_table(insert_command, vars)
-        logger.debug(f'Query is: {insert_command}, the vars are{vars}')
+        self._insert_into_table(insert_command, vars)
+        logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
+
+    def add_user_item(self, user_id, item_id, target_price):
+        """Run a INSERT query to insert new item"""
+        # getting 3 values(user_id, item_id, target_price) and forming them into a tuple.
+        vars = (user_id, item_id, target_price)
+        insert_command = "INSERT INTO items (title, price, lowest) VALUES (%s, %s, %s)"
+        self._insert_into_table(insert_command, vars)
+        logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
+
+    def add_price(self, item_id, item_price, timestamp):
+        """Run a INSERT query to insert new item"""
+        # getting 3 values(item_id, item_price, timestamp) and forming them into a tuple.
+        vars = (item_id, item_price, timestamp)
+        insert_command = "INSERT INTO items (title, price, lowest) VALUES (%s, %s, %s)"
+        self._insert_into_table(insert_command, vars)
+        logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
+
+
 
 # try:
 #    conn = psycopg2.connect(

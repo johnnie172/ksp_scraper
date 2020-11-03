@@ -3,9 +3,8 @@
 CREATE TABLE IF NOT EXISTS items (
     id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     title VARCHAR(320) NOT NULL,
-    price VARCHAR(320) NOT NULL,
-    lowest VARCHAR(320) NOT NULL,
-    time timestamp NOT NULL DEFAULT NOW()
+    price integer NOT NULL,
+    lowest integer
 );
 CREATE TABLE IF NOT EXISTS users (
     id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -19,6 +18,6 @@ CREATE TABLE IF NOT EXISTS users_items (
 );
 CREATE TABLE IF NOT EXISTS prices (
     item_id integer NOT NULL,
-    price integer UNIQUE NOT NULL,
-    time timestamp NOT NULL
+    price integer NOT NULL,
+    times_tamp timestamp NOT NULL DEFAULT NOW()
 );
