@@ -1,4 +1,5 @@
 import logging
+import consts
 
 logger = logging.getLogger(__name__)
 
@@ -11,4 +12,5 @@ def input_link():
         return answer_item_link
     else:
         logger.error(f'user answer_item_link is invalid the input was: {answer_item_link}')
-        raise Exception('Sorry we cannot use this link, Please try again.')
+        raise Exception(consts.LINK_ERROR_MESSAGE)
+
