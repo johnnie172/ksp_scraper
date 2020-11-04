@@ -1,4 +1,6 @@
 import logging
+from re import sub
+from decimal import Decimal
 
 logger = logging.getLogger(__name__)
 
@@ -12,11 +14,11 @@ def get_title_and_price(source_text_beautiful):
     title = title_div.span.text
     logger.debug(f'The title is: {title}.')
 
-    return (price, title)
+    return (title, price)
 
 
-def change_price_from_str_to_int(item_price):
-    """Function that stripping and removing the currency sign."""
-    item_price = item_price.strip('₪')
+def change_price_from_str_to_decimal(item_price):
+    """Function that converting string of price to decimal."""
+    decimal_price = Decimal(sub(r'[^\d.]', '', item_price))
     logger.debug(f'The price is {item_price}.')
-    return int(item_price)
+    return decimal_price

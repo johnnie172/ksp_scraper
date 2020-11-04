@@ -89,7 +89,7 @@ class Database:
         self._insert_into_table(insert_command, vars)
         logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
 
-    def add_item(self, item_title, item_price, lowest_price):
+    def add_item(self, item_title, item_price, lowest_price=None):
         """Run a INSERT query to insert new item"""
         # getting 3 values(title, price, lowest) and forming them into a tuple.
         vars = (item_title, item_price, lowest_price)

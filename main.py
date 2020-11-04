@@ -1,4 +1,4 @@
-import user_input_utilities, request_utilities, data_parser, data_base_utilities, consts
+import user_input_utilities, request_utilities, data_parser, consts
 from data_base_utilities import Database
 
 import logging
@@ -46,4 +46,14 @@ lowest_price = 300
 # data_base.add_user(user_email, user_password)
 
 if __name__ == '__main__':
-    pass
+
+
+
+    text = request_utilities.get_text_from_url(user_input_utilities.input_link())
+    title_and_price = data_parser.get_title_and_price(text)
+    price = data_parser.change_price_from_str_to_decimal(title_and_price[1])
+    title = title_and_price[0]
+    database = Database(consts)
+    database.connect()
+    database._db_setup()
+    database.add_item(title, price)
