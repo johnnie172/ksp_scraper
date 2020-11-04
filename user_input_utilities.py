@@ -18,10 +18,12 @@ def input_link():
 
 def input_target_price():
     """Function that asked user input for target price."""
-    answer_target_price = input(int('Please enter the target price that you would like to be notify of:'))
-    if answer_target_price.isnumeric():
+    answer_target_price = input(str('Please enter the target price that you would like to be notify of:'))
+    if answer_target_price.isnumeric() or answer_target_price.isdecimal():
+        answer_target_price = float(answer_target_price)
         logger.debug(f'The answer_target_price is: {answer_target_price}')
         return answer_target_price
     else:
-        logger.error(f'user answer_targer_price is invalid the input was: {answer_target_price}.')
+        logger.error(f'user answer_target_price is invalid the input was: {answer_target_price}.')
         raise Exception(consts.TARGET_PRICE_ERROR_MESSAGE)
+
