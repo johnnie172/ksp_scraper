@@ -1,15 +1,15 @@
 
 
-CREATE TABLE IF NOT EXISTS items (
-    id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    title VARCHAR(320) NOT NULL,
-    price NUMERIC NOT NULL,
-    lowest NUMERIC
-);
 CREATE TABLE IF NOT EXISTS users (
     id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     email VARCHAR(320) UNIQUE NOT NULL,
-    password varchar(30) NOT NULL
+    password VARCHAR(30) NOT NULL
+);
+CREATE TABLE IF NOT EXISTS items (
+    id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    title VARCHAR(320) NOT NULL,
+    url VARCHAR(320) NOT NULL,
+    lowest NUMERIC
 );
 CREATE TABLE IF NOT EXISTS users_items (
     user_id integer NOT NULL,

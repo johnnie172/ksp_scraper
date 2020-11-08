@@ -89,29 +89,29 @@ class Database:
         self._insert_into_table(insert_command, vars)
         logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
 
-    def add_item(self, item_title, item_price, lowest_price=None):
+    def add_item(self, item_title, item_url, lowest=None):
         """Run a INSERT query to insert new item"""
-        # getting 3 values(title, price, lowest) and forming them into a tuple.
-        vars = (item_title, item_price, lowest_price)
-        insert_command = "INSERT INTO items (title, price, lowest) VALUES (%s, %s, %s)"
+        # getting 3 values(title, url, lowest) and forming them into a tuple.
+        vars = (item_title, item_url, lowest)
+        insert_command = "INSERT INTO items (title, url, lowest) VALUES (%s, %s, %s)"
         self._insert_into_table(insert_command, vars)
         logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
+    #
+    # def add_user_item(self, user_id, item_id, target_price):
+    #     """Run a INSERT query to insert new item"""
+    #     # getting 3 values(user_id, item_id, target_price) and forming them into a tuple.
+    #     vars = (user_id, item_id, target_price)
+    #     insert_command = "INSERT INTO items (title, price, lowest) VALUES (%s, %s, %s)"
+    #     self._insert_into_table(insert_command, vars)
+    #     logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
 
-    def add_user_item(self, user_id, item_id, target_price):
-        """Run a INSERT query to insert new item"""
-        # getting 3 values(user_id, item_id, target_price) and forming them into a tuple.
-        vars = (user_id, item_id, target_price)
-        insert_command = "INSERT INTO items (title, price, lowest) VALUES (%s, %s, %s)"
-        self._insert_into_table(insert_command, vars)
-        logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
-
-    def add_price(self, item_id, item_price, timestamp):
-        """Run a INSERT query to insert new item"""
-        # getting 3 values(item_id, item_price, timestamp) and forming them into a tuple.
-        vars = (item_id, item_price, timestamp)
-        insert_command = "INSERT INTO items (title, price, lowest) VALUES (%s, %s, %s)"
-        self._insert_into_table(insert_command, vars)
-        logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
+    # def add_price(self, item_id, item_price):
+    #     """Run a INSERT query to insert new item"""
+    #     # getting 3 values(item_id, item_price, timestamp) and forming them into a tuple.
+    #     vars = (item_id, item_price)
+    #     insert_command = "INSERT INTO prices (title, price, lowest) VALUES (%s, %s, %s)"
+    #     self._insert_into_table(insert_command, vars)
+    #     logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
 
 
 
