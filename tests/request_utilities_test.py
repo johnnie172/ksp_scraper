@@ -11,7 +11,6 @@ class TestRequestUtilities(unittest.TestCase):
 
     def setUp(self) -> None:
         self.testdata = open('test_requests.html').read()
-        self.resualtdata = open('test_afterbeautifulsoup.html').read()
 
     def tearDown(self) -> None:
         pass

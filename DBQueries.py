@@ -1,101 +1,88 @@
+from Database import Database
 import psycopg2
 from psycopg2.extras import DictCursor
-import consts
+from psycopg2.errors import UniqueViolation
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class Database:
-    """PostgreSQL Database class."""
+class DBQueries:
 
-    # todo change for params
-    def __init__(self, consts):
-        self.host = consts.DATABASE_HOST
-        self.username = consts.DATABASE_USERNAME
-        self.password = consts.DATABASE_PASSWORD
-        self.port = consts.DATABASE_PORT
-        self.dbname = consts.DATABASE_NAME
-        self.conn = None
+    def __init__(self, database):
+        self.db = database
 
-    def _db_setup(self):
-        """Set up the postgres database."""
-        self.get_connection()
-        sql_file = open(consts.DATABASE_TABLES_SETUP_FILE, 'r')
-        with self.conn.cursor() as cur:
-            cur.execute(sql_file.read())
-            self.conn.commit()
-        logger.info(f'The script {consts.DATABASE_TABLES_SETUP_FILE} has run.')
-
-    def connect(self):
-        """Connect to a Postgres database."""
-        try:
-            self.conn = psycopg2.connect(
-                host=self.host,
-                user=self.username,
-                password=self.password,
-                port=self.port,
-                dbname=self.dbname
-            )
-        except psycopg2.DatabaseError as e:
-            logger.error(e)
-            raise e
-        logger.info('Connection opened successfully.')
-
-    def get_connection(self):
-        """Returning connection item if None is exist"""
-        if self.conn.closed != 0:
-            self.connect()
-        logger.debug(f'The connection object is: {self.conn}.')
-        return self.conn
+    """Run queries for DataBase"""
 
     def select_rows(self, query):
         """Run a SQL query to select rows from table."""
-        self.get_connection()
-        with self.conn.cursor() as cur:
+        self.db.get_connection()
+        with self.db.conn.cursor() as cur:
             cur.execute(query)
             records = [row for row in cur.fetchall()]
             return records
 
     def select_rows_dict_cursor(self, query):
         """Run SELECT query and return list of dicts."""
-        self.get_connection()
-        with self.conn.cursor(cursor_factory=DictCursor) as cur:
+        self.db.get_connection()
+        with self.db.conn.cursor(cursor_factory=DictCursor) as cur:
             cur.execute(query)
             records = cur.fetchall()
             return records
 
     def _update_rows(self, query):
         """Run a SQL query to update rows in table."""
-        self.get_connection()
-        with self.conn.cursor() as cur:
+        self.db.get_connection()
+        with self.db.conn.cursor() as cur:
             cur.execute(query)
-            self.conn.commit()
+            self.db.conn.commit()
             logger.info(f"{cur.rowcount} rows affected.")
 
-    def _insert_into_table(self, query, vars):
+    def _insert(self, query, vars):
         """Run a SQL query to insert rows in table."""
-        self.get_connection()
-        with self.conn.cursor() as cur:
+        self.db.get_connection()
+        with self.db.conn.cursor() as cur:
             cur.execute(query, vars)
-            self.conn.commit()
+            self.db.conn.commit()
             logger.info(f"{cur.rowcount} rows affected.")
+
+    def _insert_and_return_id(self, query, vars, select_id_command):
+        """Run a SQL query to insert rows in table and return id."""
+        self.db.get_connection()
+        query = query + ' RETURNING id'
+        with self.db.conn.cursor() as cur:
+            try:
+                cur.execute(query, vars)
+                id = cur.fetchone()[0]
+                self.db.conn.commit()
+            except(UniqueViolation):
+                logger.debug('There is UniqueViolation error preforming rollback and returning id')
+                self.db.conn.rollback()
+                cur.execute(select_id_command, (vars[0],))
+                id = cur.fetchone()[0]
+                self.db.conn.commit()
+            logger.info(f"{cur.rowcount} rows affected, the id is:{id} ")
+            return id
 
     def add_user(self, user_email, user_password):
         """Run a INSERT query to insert new user"""
         # getting 2 values(email, password) and forming them into a tuple.
         vars = (user_email, user_password)
         insert_command = "INSERT INTO users (email, password) VALUES (%s, %s)"
-        self._insert_into_table(insert_command, vars)
+        select_id_command = "SELECT id FROM users WHERE email = %s"
+        id = self._insert_and_return_id(insert_command, vars, select_id_command)
         logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
+        return id
 
     def add_item(self, item_title, item_url, lowest=None):
         """Run a INSERT query to insert new item"""
         # getting 3 values(title, url, lowest) and forming them into a tuple.
         vars = (item_title, item_url, lowest)
         insert_command = "INSERT INTO items (title, url, lowest) VALUES (%s, %s, %s)"
-        self._insert_into_table(insert_command, vars)
+        select_id_command = "SELECT id FROM items WHERE title = %s"
+        id = self._insert_and_return_id(insert_command, vars, select_id_command)
         logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
+        return id
     #
     # def add_user_item(self, user_id, item_id, target_price):
     #     """Run a INSERT query to insert new item"""
@@ -112,8 +99,6 @@ class Database:
     #     insert_command = "INSERT INTO prices (title, price, lowest) VALUES (%s, %s, %s)"
     #     self._insert_into_table(insert_command, vars)
     #     logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
-
-
 
 # try:
 #    conn = psycopg2.connect(
