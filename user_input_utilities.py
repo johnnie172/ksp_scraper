@@ -8,7 +8,7 @@ def input_link():
     """Function that asked user input for link to scrap."""
     answer_item_link = input(str("Please enter KSP product link(starting with https://) : "))
 
-    if answer_item_link[0:8] == 'https://' and answer_item_link[-1].isnumeric():
+    if answer_item_link[0:8] == 'https://':
         logger.info('The answer_item_link is: {}'.format(answer_item_link))
         return answer_item_link
     else:

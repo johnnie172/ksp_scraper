@@ -1,5 +1,6 @@
 import unittest
 import data_parser
+import consts
 from decimal import Decimal
 from bs4 import BeautifulSoup
 
@@ -16,3 +17,11 @@ class TestDataParser(unittest.TestCase):
         self.assertEqual(data_parser.change_price_from_str_to_decimal("10.1"), Decimal("10.1"))
         self.assertEqual(data_parser.change_price_from_str_to_decimal("160 $"), Decimal("160"))
         self.assertEqual(data_parser.change_price_from_str_to_decimal("10.1 ₪"), Decimal("10.1"))
+
+    def test_parse_uin_from_url(self):
+        self.assertEqual(data_parser.parse_uin_from_url('https://ksp.co.il/?uin=68851'), '68851')
+        self.assertEqual(data_parser.parse_uin_from_url(\
+            'https://ksp.co.il/?select=.112.&kg=&list=1&sort=2&glist=0&uin=65850'), '65850')
+        self.assertEqual(data_parser.parse_uin_from_url('https://ksp.co.il/?uin=68851aa111'), '68851')
+        with self.assertRaisesRegex(Exception, consts.UIN_ERROR_MESSAGE):
+            data_parser.parse_uin_from_url('')

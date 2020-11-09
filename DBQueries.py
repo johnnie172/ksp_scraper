@@ -23,7 +23,7 @@ class DBQueries:
             return records
 
     def select_rows_dict_cursor(self, query):
-        """Run SELECT query and return list of dicts."""
+        """Run a SELECT query and return list of dicts."""
         self.db.get_connection()
         with self.db.conn.cursor(cursor_factory=DictCursor) as cur:
             cur.execute(query)
@@ -65,7 +65,7 @@ class DBQueries:
             return id
 
     def add_user(self, user_email, user_password):
-        """Run a INSERT query to insert new user"""
+        """Run an INSERT query to insert new user"""
         # getting 2 values(email, password) and forming them into a tuple.
         vars = (user_email, user_password)
         insert_command = "INSERT INTO users (email, password) VALUES (%s, %s)"
@@ -74,15 +74,31 @@ class DBQueries:
         logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
         return id
 
-    def add_item(self, item_title, item_url, lowest=None):
-        """Run a INSERT query to insert new item"""
+    def add_item(self, item_title, item_uin, lowest=None):
+        """Run an INSERT query to insert new item"""
         # getting 3 values(title, url, lowest) and forming them into a tuple.
-        vars = (item_title, item_url, lowest)
-        insert_command = "INSERT INTO items (title, url, lowest) VALUES (%s, %s, %s)"
+        vars = (item_title, item_uin, lowest)
+        insert_command = "INSERT INTO items (title, uin, lowest) VALUES (%s, %s, %s)"
         select_id_command = "SELECT id FROM items WHERE title = %s"
         id = self._insert_and_return_id(insert_command, vars, select_id_command)
         logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
         return id
+
+    def add_price(self, item_id, price):
+        """Run an INSERT query to insert new price"""
+        # getting 2 values(item_id, price) and forming them into a tuple auto add timestamp.
+        vars = (item_id, price)
+        insert_command = "INSERT INTO prices (item_id, price) VALUES (%s, %s)"
+        self._insert(insert_command, vars)
+        logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
+
+    def add_user_item(self, user_id, item_id, target_price):
+        """Run an INSERT query to insert new user item"""
+        # getting 3 values(user_id, item_id, target_price) and forming them into a tuple.
+        vars = (user_id, item_id, target_price)
+        insert_command = "INSERT INTO users_items (user_id, item_id, target_price) VALUES (%s, %s, %s)"
+        self._insert(insert_command, vars)
+        logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
     #
     # def add_user_item(self, user_id, item_id, target_price):
     #     """Run a INSERT query to insert new item"""

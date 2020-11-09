@@ -1,6 +1,7 @@
 import logging
 from re import sub
 from decimal import Decimal
+import consts
 
 logger = logging.getLogger(__name__)
 
@@ -22,3 +23,21 @@ def change_price_from_str_to_decimal(item_price):
     decimal_price = Decimal(sub(r'[^\d.]', '', item_price))
     logger.debug(f'The price is {item_price}.')
     return decimal_price
+
+
+def parse_uin_from_url(url):
+    """Getting uin instead of the entire url"""
+    uin = ''
+    i = url.find('uin=')
+    if i < 0:
+        logger.error(consts.UIN_ERROR_MESSAGE)
+        raise Exception(consts.UIN_ERROR_MESSAGE)
+    else:
+        for i in range(i+4, len(url)):
+            if url[i].isnumeric() and i != len(url):
+                uin += url[i]
+            else:
+                logger.debug(f'The uin is:{uin}.')
+                return uin
+        logger.debug(f'The uin is:{uin}.')
+        return uin
