@@ -1,5 +1,6 @@
 import logging
 import consts
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -27,3 +28,43 @@ def input_target_price():
         logger.error(f'user answer_target_price is invalid the input was: {answer_target_price}.')
         raise Exception(consts.TARGET_PRICE_ERROR_MESSAGE)
 
+
+def input_user_email():
+    """Function that asked user input for Email."""
+    answer_user_email = input(str('Please enter Email: '))
+    if check_valid_email(answer_user_email):
+        logger.debug(f'User Email is: {answer_user_email}.')
+        return answer_user_email
+    else:
+        logger.error(f'{consts.USER_EMAIL_ERROR_MESSAGE} email was: {answer_user_email}.')
+        raise Exception(consts.USER_EMAIL_ERROR_MESSAGE)
+
+
+def check_valid_email(email):
+    """Function that validate Email address."""
+    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+    if (re.search(regex, email)):
+        return True
+    else:
+        return False
+
+
+def input_user_password():
+    """Function that asked user input for password."""
+    """NOT SECURED!!!"""
+    answer_user_pass = input(str('Please enter password: '))
+    answer_user_pass_1 = input(str('Please enter password again: '))
+    if answer_user_pass == answer_user_pass_1:
+        return answer_user_pass
+    else:
+        return "Wrong"
+
+
+def user_login():
+    """Function that login user."""
+    pass
+
+
+def user_signup():
+    """Function that signup user."""
+    pass

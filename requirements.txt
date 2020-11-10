@@ -4,3 +4,4 @@ html5lib
 requests
 requests_mock
 psycopg2
+schedule

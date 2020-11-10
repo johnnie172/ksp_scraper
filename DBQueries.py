@@ -99,6 +99,19 @@ class DBQueries:
         insert_command = "INSERT INTO users_items (user_id, item_id, target_price) VALUES (%s, %s, %s)"
         self._insert(insert_command, vars)
         logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
+
+    def select_all_uin(self):
+        """Run SELECT all rows from items to get a dict of id's and uin's"""
+        query = "SELECT id, uin FROM items"
+        records = self.select_rows(query)
+        logger.debug(f'Records are: {records}.')
+        return records
+
+    def select_user(self):
+        """Run SELECT to get user info."""
+        pass
+
+
     #
     # def add_user_item(self, user_id, item_id, target_price):
     #     """Run a INSERT query to insert new item"""
