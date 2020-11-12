@@ -1,4 +1,4 @@
-import user_input_utilities, request_utilities, data_parser, consts, schedule_utilities
+import user_input_utilities, request_utilities, data_parser, consts, schedule_utilities, users_utilities
 from Database import Database
 from DBQueries import DBQueries
 import logging
@@ -15,6 +15,7 @@ def connect_to_db():
     database._db_setup()
     return database
 
+
 def update_all_prices():
     db = connect_to_db()
     db_queries = DBQueries(db)
@@ -25,6 +26,19 @@ def update_all_prices():
         price = data_parser.change_price_from_str_to_decimal(title_and_price[1])
         item_id = uin[0]
         db_queries.add_price(item_id, price)
+
+
+def check_for_decreasement_in_price():
+    pass
+
+
+def check_for_target_prices():
+    pass
+
+
+db = connect_to_db()
+dbq = DBQueries(db)
+
 
 
 if __name__ == '__main__':
@@ -40,8 +54,26 @@ if __name__ == '__main__':
     # db_queries.add_price(item_id, price)
     # db_queries.add_user_item(user_id, item_id, target_price=165)
 
-    # schedule_utilities.schedule_timer(20, update_all_prices)
+    schedule_utilities.schedule_timer(20, update_all_prices)
 
-    user_input_utilities.input_user_email()
+    # dbq.add_user('walla@walla.com', '123456')
+    # dbq.add_user('gmail@gmail.com', '123456')
+    #add user then add def login def signup
+
+    # logged_user = users_utilities.user_login()
+    # current_user_id = logged_user[0]
+    # current_user_email = logged_user[1]
+    # url = user_input_utilities.input_link()
+    # uin = data_parser.parse_uin_from_url(url)
+    # text = request_utilities.get_text_from_url(consts.URL_TO_ADD_UIN + uin)
+    # title_and_price = data_parser.get_title_and_price(text)
+    # price = data_parser.change_price_from_str_to_decimal(title_and_price[1])
+    # print(f'Current price is:{price}.')
+    # current_user_target_price = user_input_utilities.input_target_price()
+    # title = title_and_price[0]
+    # item_id = dbq.add_item(title, uin, price)
+    # dbq.add_price(item_id, price)
+    # dbq.add_user_item(current_user_id, item_id, current_user_target_price)
 
     pass
+

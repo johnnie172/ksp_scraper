@@ -14,6 +14,14 @@ class DBQueries:
 
     """Run queries for DataBase"""
 
+    def select_row_with_condition(self, query, vars):
+        """Run a SQL query to select row with WHERE condition."""
+        self.db.get_connection()
+        with self.db.conn.cursor() as cur:
+            cur.execute(query, vars)
+            record = cur.fetchone()
+            return record
+
     def select_rows(self, query):
         """Run a SQL query to select rows from table."""
         self.db.get_connection()
@@ -107,9 +115,13 @@ class DBQueries:
         logger.debug(f'Records are: {records}.')
         return records
 
-    def select_user(self):
+    def select_user(self, email, password):
         """Run SELECT to get user info."""
-        pass
+        query = "SELECT id, email FROM users WHERE email = %s and password = %s"
+        vars = (email, password)
+        records = self.select_row_with_condition(query, vars)
+        logger.debug(f'Records are: {records}.')
+        return records
 
 
     #

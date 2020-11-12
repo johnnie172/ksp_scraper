@@ -42,8 +42,14 @@ class TestUserInputUtilities(unittest.TestCase):
         self.assertEqual(user_input_utilities.check_valid_email('name@bezeq.com'), True)
         self.assertEqual(user_input_utilities.check_valid_email('gmailgmail.com'), False)
 
+    def test_input_user_password(self):
+        with mock.patch('builtins.input', return_value="secret"):
+            self.assertEqual(user_input_utilities.input_user_password(), "secret")
+        with mock.patch('builtins.input', return_value="secret12"):
+            self.assertEqual(user_input_utilities.input_user_password(), "secret12")
+
     @mock.patch('builtins.input', side_effect=["secret", "secret", "no", "yes", "ok", "ok"])
-    def test_input_user_password(self, side_effect):
-        self.assertEqual(user_input_utilities.input_user_password(), "secret")
-        self.assertEqual(user_input_utilities.input_user_password(), "Wrong")
-        self.assertEqual(user_input_utilities.input_user_password(), "ok")
+    def test_input_user_password_sign_up(self, side_effect):
+        self.assertEqual(user_input_utilities.input_user_password_sign_up(), "secret")
+        self.assertEqual(user_input_utilities.input_user_password_sign_up(), "Wrong")
+        self.assertEqual(user_input_utilities.input_user_password_sign_up(), "ok")

@@ -5,7 +5,7 @@ DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')
 DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
 DATABASE_HOST = os.environ.get('DATABASE_HOST')
 DATABASE_PORT = os.environ.get('DATABASE_PORT')
-DATABASE_TABLES_SETUP_FILE = 'create_tabels.sql'
+DATABASE_TABLES_SETUP_FILE = 'create_tables.sql'
 
 URL_TO_ADD_UIN = 'https://ksp.co.il/?uin='
 

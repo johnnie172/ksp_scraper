@@ -42,16 +42,22 @@ def input_user_email():
 
 def check_valid_email(email):
     """Function that validate Email address."""
-    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+    regex = "([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)"
     if (re.search(regex, email)):
         return True
-    else:
-        return False
+
+    return False
 
 
 def input_user_password():
-    """Function that asked user input for password."""
-    """NOT SECURED!!!"""
+    """Function that asked user input for password for login."""
+    answer_user_pass = input(str('Please enter password: '))
+    return answer_user_pass
+
+
+def input_user_password_sign_up():
+    """Function that asked user input for password for the first time.
+    NOT SECURED!!!"""
     answer_user_pass = input(str('Please enter password: '))
     answer_user_pass_1 = input(str('Please enter password again: '))
     if answer_user_pass == answer_user_pass_1:
