@@ -123,6 +123,44 @@ class DBQueries:
         logger.debug(f'Records are: {records}.')
         return records
 
+    def add_prices(self, item_id_and_price_list):
+        """Run INSERT query for a list of tuples to add prices."""
+        # getting 2 values (id, price).
+        self.db.get_connection()
+
+        with self.db.conn.cursor() as cur:
+            for record in item_id_and_price_list:
+                query = "INSERT INTO prices (item_id, price) VALUES (%s, %s)"
+                vars = (record[0], record[1])
+                cur.execute(query, vars)
+                logger.debug(f"{cur.rowcount} rows about to be committed.")
+            self.db.conn.commit()
+            logger.debug("Committed function.")
+
+    def check_for_lowest_price_and_update(self):
+        """Run SELECT command for checking lowest price, if resulted with changes update lowest."""
+
+        query = "SELECT DISTINCT id, price\
+                    FROM items INNER JOIN prices ON item_id = id\
+                        WHERE price < lowest ORDER BY id"
+        self.db.get_connection()
+        with self.db.conn.cursor() as cur:
+            cur.execute(query)
+            logger.debug(f'Query is: {query}.')
+            records = cur.fetchall()
+        self.db.conn.commit()
+        logger.debug('Committed query')
+        if len(records) > 0:
+            logger.debug(f'Len of records is {len(records)}.')
+            with self.db.conn.cursor() as cur:
+                for record in records:
+                    vars = (record[1], record[0])
+                    query = "UPDATE items SET lowest = %s WHERE id = %s"
+                    cur.execute(query, vars)
+                    logger.debug(f'Updating lowest price in items.')
+                    logger.info(f'{cur.rowcount} rows affected.')
+            self.db.conn.commit()
+        logger.debug("Committed function.")
 
     #
     # def add_user_item(self, user_id, item_id, target_price):

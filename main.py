@@ -39,9 +39,9 @@ def check_for_target_prices():
     pass
 
 
+
 db = connect_to_db()
 dbq = DBQueries(db)
-
 
 
 if __name__ == '__main__':
@@ -77,5 +77,37 @@ if __name__ == '__main__':
     # item_id = dbq.add_item(title, uin, price)
     # dbq.add_price(item_id, price)
     # dbq.add_user_item(current_user_id, item_id, current_user_target_price)
-    # update_all_prices.delay()
+
+    update_all_prices.delay()
+    #
+    # list_of_items = dbq.select_all_uin()
+    # def get_prices_list_from_uin_list(list_of_items):
+    #     list_to_return = []
+    #     for uin in list_of_items:
+    #         text = request_utilities.get_text_from_url(consts.URL_TO_ADD_UIN + uin[1])
+    #         title_and_price = data_parser.get_title_and_price(text)
+    #         price = data_parser.change_price_from_str_to_decimal(title_and_price[1])
+    #         item_id = uin[0]
+    #         list_to_return.append((item_id, price))
+    #     return list_to_return
+
+    # list_of_items = dbq.select_all_uin()
+    # new_list_of_items = []
+    # for uin in list_of_items:
+    #     text = request_utilities.get_text_from_url(consts.URL_TO_ADD_UIN + uin[1])
+    #     title_and_price = data_parser.get_title_and_price(text)
+    #     price = data_parser.change_price_from_str_to_decimal(title_and_price[1])
+    #     item_id = uin[0]
+    #     new_list_of_items.append((item_id, price))
+
+    # dbq.check_for_lowest_price_and_update()
+
+    # list_ = get_prices_list_from_uin_list(list_of_items)
+    # print(list_)
+    # dbq.check_for_lowest_price(list_)
+
+    # list_of_id_and_prices = get_prices_list_from_uin_list(list_of_items)
+    # dbq.add_prices(list_of_id_and_prices)
+
+
     pass

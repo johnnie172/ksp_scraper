@@ -8,14 +8,22 @@ logger = logging.getLogger(__name__)
 
 def get_title_and_price(source_text_beautiful):
     """Function that scraping for the price and title from a link, returning tuple of both."""
-    price_div = source_text_beautiful.find(class_="div-options-prices")
-    price = price_div.span.text
-    logger.debug(f'The price is: {price}.')
-    title_div = source_text_beautiful.find(class_="title-text")
-    title = title_div.span.text
-    logger.debug(f'The title is: {title}.')
-
-    return (title, price)
+    try:
+        price_div = source_text_beautiful.find(class_="div-options-prices")
+        price = price_div.span.text
+        logger.debug(f'The price is: {price}.')
+        title_div = source_text_beautiful.find(class_="title-text")
+        title = title_div.span.text
+        logger.debug(f'The title is: {title}.')
+        return (title, price)
+    except AttributeError as e:
+        logger.exception(e)
+        sold_out_div = source_text_beautiful.find(class_="ims")
+        logger.debug(f' Sold Out item: {sold_out_div}')
+        sold_out = sold_out_div.text
+        if 'אזל במלאי' in sold_out:
+            logger.error('The item is out of stock!')
+            return None
 
 
 def change_price_from_str_to_decimal(item_price):
@@ -33,7 +41,7 @@ def parse_uin_from_url(url):
         logger.error(consts.UIN_ERROR_MESSAGE)
         raise Exception(consts.UIN_ERROR_MESSAGE)
     else:
-        for i in range(i+4, len(url)):
+        for i in range(i + 4, len(url)):
             if url[i].isnumeric() and i != len(url):
                 uin += url[i]
             else:
