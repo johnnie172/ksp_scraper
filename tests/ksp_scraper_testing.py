@@ -4,6 +4,7 @@ import tests.data_parser_test
 import tests.request_utilities_test
 import tests.user_utilities_test
 
+
 def suite():
 
     test_suite = unittest.TestSuite()

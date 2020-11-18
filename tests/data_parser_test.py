@@ -15,7 +15,7 @@ class TestDataParser(unittest.TestCase):
 
         with open('source_text_no_item.txt') as source_text:
             source_text_beautiful = BeautifulSoup(source_text, 'lxml')
-            self.assertEqual(data_parser.get_title_and_price(source_text_beautiful),(None))
+            self.assertEqual(data_parser.get_title_and_price(source_text_beautiful), None)
             self.assertRaises(Exception,data_parser.get_title_and_price(source_text_beautiful))
 
     def test_change_price_from_str_to_decimal(self):
@@ -25,7 +25,7 @@ class TestDataParser(unittest.TestCase):
 
     def test_parse_uin_from_url(self):
         self.assertEqual(data_parser.parse_uin_from_url('https://ksp.co.il/?uin=68851'), '68851')
-        self.assertEqual(data_parser.parse_uin_from_url(\
+        self.assertEqual(data_parser.parse_uin_from_url(
             'https://ksp.co.il/?select=.112.&kg=&list=1&sort=2&glist=0&uin=65850'), '65850')
         self.assertEqual(data_parser.parse_uin_from_url('https://ksp.co.il/?uin=68851aa111'), '68851')
         with self.assertRaisesRegex(Exception, consts.UIN_ERROR_MESSAGE):

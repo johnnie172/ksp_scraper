@@ -1,6 +1,7 @@
 import psycopg2
 from psycopg2.extras import DictCursor
 import consts
+import db_config
 import logging
 
 logger = logging.getLogger(__name__)
@@ -10,22 +11,22 @@ class Database:
     """PostgreSQL Database class."""
 
     # todo change for params
-    def __init__(self, consts):
-        self.host = consts.DATABASE_HOST
-        self.username = consts.DATABASE_USERNAME
-        self.password = consts.DATABASE_PASSWORD
-        self.port = consts.DATABASE_PORT
-        self.dbname = consts.DATABASE_NAME
+    def __init__(self, db_config):
+        self.host = db_config.DATABASE_HOST
+        self.username = db_config.DATABASE_USERNAME
+        self.password = db_config.DATABASE_PASSWORD
+        self.port = db_config.DATABASE_PORT
+        self.dbname = db_config.DATABASE_NAME
         self.conn = None
 
     def _db_setup(self):
         """Set up the postgres database."""
         self.get_connection()
-        sql_file = open(consts.DATABASE_TABLES_SETUP_FILE, 'r')
+        sql_file = open(db_config.DATABASE_TABLES_SETUP_FILE, 'r')
         with self.conn.cursor() as cur:
             cur.execute(sql_file.read())
             self.conn.commit()
-        logger.info(f'The script {consts.DATABASE_TABLES_SETUP_FILE} has run.')
+        logger.info(f'The script {db_config.DATABASE_TABLES_SETUP_FILE} has run.')
 
     def connect(self):
         """Connect to a Postgres database."""

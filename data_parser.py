@@ -22,7 +22,10 @@ def get_title_and_price(source_text_beautiful):
         logger.debug(f' Sold Out item: {sold_out_div}')
         sold_out = sold_out_div.text
         if 'אזל במלאי' in sold_out:
-            logger.error('The item is out of stock!')
+            logger.error(consts.ITEM_OUT_OF_STOCK_MESSAGE)
+            return None
+        else:
+            logger.error(consts.GENERIC_ERROR_MESSAGE)
             return None
 
 

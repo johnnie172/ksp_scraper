@@ -109,8 +109,8 @@ class DBQueries:
         logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
 
     def select_all_uin(self):
-        """Run SELECT all rows from items to get a dict of id's and uin's"""
-        query = "SELECT id, uin FROM items"
+        """Run SELECT all rows of in stock items from items to get a dict of id's and uin's"""
+        query = "SELECT id, uin FROM items WHERE in_stock = true"
         records = self.select_rows(query)
         logger.debug(f'Records are: {records}.')
         return records
@@ -161,6 +161,18 @@ class DBQueries:
                     logger.info(f'{cur.rowcount} rows affected.')
             self.db.conn.commit()
         logger.debug("Committed function.")
+
+    def change_in_stock(self, uin):
+        """Run update for in stock column in items table."""
+
+        query = "UPDATE items SET in_stock = false\
+        WHERE uin = %s"
+        vars = (uin,)
+        self.db.get_connection()
+        with self.db.conn.cursor() as cur:
+            cur.execute(query, vars)
+            self.db.conn.commit()
+            logger.info(f"{cur.rowcount} rows affected.")
 
     #
     # def add_user_item(self, user_id, item_id, target_price):
