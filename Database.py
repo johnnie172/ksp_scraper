@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 class Database:
     """PostgreSQL Database class."""
 
-    # todo change for params
     def __init__(self, db_config):
         self.host = db_config.DATABASE_HOST
         self.username = db_config.DATABASE_USERNAME
@@ -49,4 +48,3 @@ class Database:
             self.connect()
         logger.debug(f'The connection object is: {self.conn}.')
         return self.conn
-

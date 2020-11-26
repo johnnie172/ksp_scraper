@@ -16,7 +16,7 @@ class TestDataParser(unittest.TestCase):
         with open('source_text_no_item.txt') as source_text:
             source_text_beautiful = BeautifulSoup(source_text, 'lxml')
             self.assertEqual(data_parser.get_title_and_price(source_text_beautiful), None)
-            self.assertRaises(Exception,data_parser.get_title_and_price(source_text_beautiful))
+            self.assertRaises(Exception, data_parser.get_title_and_price(source_text_beautiful))
 
     def test_change_price_from_str_to_decimal(self):
         self.assertEqual(data_parser.change_price_from_str_to_decimal("10.1"), Decimal("10.1"))

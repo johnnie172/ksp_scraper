@@ -21,5 +21,18 @@ def connect_to_db():
 db = connect_to_db()
 dbq = DBQueries(db)
 
+# testing add item
+item_uin = "37068"
+item_link = consts.URL_TO_ADD_UIN+item_uin
+def add_item(item_link):
+    source_text_beautiful = request_utilities.get_text_from_url(item_link)
+    title_and_price = data_parser.get_title_and_price(source_text_beautiful)
+    if title_and_price:
+        price = data_parser.change_price_from_str_to_decimal(title_and_price[1])
+        print(dbq.add_item(title_and_price[0], item_uin))
+    else:
+        print(f'{consts.ITEM_OUT_OF_STOCK_MESSAGE}')
+
 if __name__ == '__main__':
-    update_all_prices.delay()
+    # update_all_prices()
+    add_item(item_link)

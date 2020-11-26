@@ -10,7 +10,6 @@ class TestUserUtilities(unittest.TestCase):
     # def test_user_login(self, side_effect):
     #     self.assertEqual(users_utilities.user_login()[0], 1)
 
-
     def test_user_signup(self):
         pass
 

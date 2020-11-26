@@ -73,24 +73,48 @@ class DBQueries:
             return id
 
     def add_user(self, user_email, user_password):
-        """Run an INSERT query to insert new user"""
-        # getting 2 values(email, password) and forming them into a tuple.
+        """Run an INSERT query to add new user and returning id."""
+        query = "INSERT INTO users (email, password) VALUES (%s, %s) RETURNING id"
         vars = (user_email, user_password)
-        insert_command = "INSERT INTO users (email, password) VALUES (%s, %s)"
-        select_id_command = "SELECT id FROM users WHERE email = %s"
-        id = self._insert_and_return_id(insert_command, vars, select_id_command)
-        logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
-        return id
+        with self.db.conn.cursor() as cur:
+            try:
+                cur.execute(query, vars)
+                id = cur.fetchone()[0]
+                self.db.conn.commit()
+            except(UniqueViolation):
+                logger.debug('There is UniqueViolation error!')
+                return None
+            logger.info(f"{cur.rowcount} rows affected, the id is:{id} ")
+            return id
+
+    def select_user(self, email, password):
+        """Run SELECT to get user info."""
+        query = "SELECT id, email FROM users WHERE email = %s and password = %s"
+        vars = (email, password)
+        records = self.select_row_with_condition(query, vars)
+        logger.debug(f'Records are: {records}.')
+        return records
 
     def add_item(self, item_title, item_uin, lowest=None):
-        """Run an INSERT query to insert new item"""
+        """Run an INSERT query to insert new item and returning id."""
         # getting 3 values(title, url, lowest) and forming them into a tuple.
+        query = "INSERT INTO items (title, uin, lowest) VALUES (%s, %s, %s) RETURNING id"
         vars = (item_title, item_uin, lowest)
-        insert_command = "INSERT INTO items (title, uin, lowest) VALUES (%s, %s, %s)"
-        select_id_command = "SELECT id FROM items WHERE title = %s"
-        id = self._insert_and_return_id(insert_command, vars, select_id_command)
-        logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
-        return id
+        self.db.get_connection()
+        with self.db.conn.cursor() as cur:
+            try:
+                cur.execute(query, vars)
+                id = cur.fetchone()[0]
+                self.db.conn.commit()
+            except(UniqueViolation):
+                logger.debug('There is UniqueViolation error preforming rollback and returning id')
+                self.db.conn.rollback()
+                select_id_command = "SELECT id FROM items WHERE title = %s"
+                cur.execute(select_id_command, (vars[0],))
+                id = cur.fetchone()[0]
+                self.db.conn.commit()
+            logger.info(f"{cur.rowcount} rows affected, the id is:{id} ")
+            return id
 
     def add_price(self, item_id, price):
         """Run an INSERT query to insert new price"""
@@ -109,17 +133,9 @@ class DBQueries:
         logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
 
     def select_all_uin(self):
-        """Run SELECT all rows of in stock items from items to get a dict of id's and uin's"""
+        """Run SELECT all rows of in stock items from items to get a dict of id's and uin's."""
         query = "SELECT id, uin FROM items WHERE in_stock = true"
         records = self.select_rows(query)
-        logger.debug(f'Records are: {records}.')
-        return records
-
-    def select_user(self, email, password):
-        """Run SELECT to get user info."""
-        query = "SELECT id, email FROM users WHERE email = %s and password = %s"
-        vars = (email, password)
-        records = self.select_row_with_condition(query, vars)
         logger.debug(f'Records are: {records}.')
         return records
 
@@ -139,7 +155,6 @@ class DBQueries:
 
     def check_for_lowest_price_and_update(self):
         """Run SELECT command for checking lowest price, if resulted with changes update lowest."""
-
         query = "SELECT DISTINCT id, price\
                     FROM items INNER JOIN prices ON item_id = id\
                         WHERE price < lowest ORDER BY id"
@@ -162,7 +177,7 @@ class DBQueries:
             self.db.conn.commit()
         logger.debug("Committed function.")
 
-    def change_in_stock(self, uin):
+    def change_to_out_of_stock(self, uin):
         """Run update for in stock column in items table."""
 
         query = "UPDATE items SET in_stock = false\
@@ -174,6 +189,26 @@ class DBQueries:
             self.db.conn.commit()
             logger.info(f"{cur.rowcount} rows affected.")
 
+    ### old add item add user(with insert and return id.
+    # def add_item(self, item_title, item_uin, lowest=None):
+    #     """Run an INSERT query to insert new item"""
+    #     # getting 3 values(title, url, lowest) and forming them into a tuple.
+    #     vars = (item_title, item_uin, lowest)
+    #     insert_command = "INSERT INTO items (title, uin, lowest) VALUES (%s, %s, %s)"
+    #     select_id_command = "SELECT id FROM items WHERE title = %s"
+    #     id = self._insert_and_return_id(insert_command, vars, select_id_command)
+    #     logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
+    #     return id
+
+    # def add_user(self, user_email, user_password):
+    #     """Run an INSERT query to insert new user"""
+    #     # getting 2 values(email, password) and forming them into a tuple.
+    #     vars = (user_email, user_password)
+    #     insert_command = "INSERT INTO users (email, password) VALUES (%s, %s)"
+    #     select_id_command = "SELECT id FROM users WHERE email = %s"
+    #     id = self._insert_and_return_id(insert_command, vars, select_id_command)
+    #     logger.debug(f'Query is: {insert_command}, the vars are{vars}.')
+    #     return id
     #
     # def add_user_item(self, user_id, item_id, target_price):
     #     """Run a INSERT query to insert new item"""

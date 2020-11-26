@@ -1,18 +1,16 @@
 from Database import Database
 from DBQueries import DBQueries
-import consts, request_utilities, data_parser, db_config
+import consts, request_utilities, data_parser, db_config, users_utilities
 from celery import Celery
 # from celery.utils.log import get_task_logger
 import logging
 
-
-
 app = Celery()
 app.config_from_object('celery_config')
 
-
 # logger = get_task_logger(__name__)
 logger = logging.getLogger(__name__)
+
 
 def connect_to_db():
     database = Database(db_config)
@@ -39,8 +37,8 @@ def update_all_prices():
                 item_id = uin[0]
                 new_list_of_items.append((item_id, price))
             else:
-                db_queries.change_in_stock(uin[1])
-            #todo if item out of stock do somthing to db
+                db_queries.change_to_out_of_stock(uin[1])
+                users_utilities.notify_out_of_stock()
         except:
             pass
     db_queries.add_prices(new_list_of_items)

@@ -17,6 +17,8 @@ import os
 URL_TO_ADD_UIN = 'https://ksp.co.il/?uin='
 
 USER_EMAIL_ERROR_MESSAGE = 'You have entered invalid Email address'
+EMAIL_ALREADY_EXISTS_MESSAGE = 'Email is in our system, please try again.'
+
 LINK_ERROR_MESSAGE = 'Sorry we cannot use this link, Please try again.'
 TARGET_PRICE_ERROR_MESSAGE = 'Sorry the target price is not valid, please make sure you entered numbers only(not ' \
                              'decimal). '
