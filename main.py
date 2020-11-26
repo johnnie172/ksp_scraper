@@ -1,5 +1,5 @@
 import user_input_utilities, request_utilities, data_parser,\
-    consts, db_config, schedule_utilities, users_utilities
+    consts, db_config, users_utilities
 from Database import Database
 from DBQueries import DBQueries
 import logging
@@ -35,4 +35,5 @@ def add_item(item_link):
 
 if __name__ == '__main__':
     # update_all_prices()
-    add_item(item_link)
+    # add_item(item_link)
+    # print(users_utilities.user_login())

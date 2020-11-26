@@ -87,10 +87,10 @@ class DBQueries:
             logger.info(f"{cur.rowcount} rows affected, the id is:{id} ")
             return id
 
-    def select_user(self, email, password):
+    def select_user(self, email):
         """Run SELECT to get user info."""
-        query = "SELECT id, email FROM users WHERE email = %s and password = %s"
-        vars = (email, password)
+        query = "SELECT id, email, password FROM users WHERE email = %s"
+        vars = (email,)
         records = self.select_row_with_condition(query, vars)
         logger.debug(f'Records are: {records}.')
         return records

@@ -6,3 +6,4 @@ requests_mock
 psycopg2
 schedule
 celery
+bcrypt

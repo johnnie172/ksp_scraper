@@ -1,5 +1,5 @@
 import logging
-import consts
+import consts, users_utilities
 import re
 
 logger = logging.getLogger(__name__)
@@ -56,12 +56,12 @@ def input_user_password():
 
 
 def input_user_password_sign_up():
-    """Function that asked user input for password for the first time.
-    NOT SECURED!!!"""
+    """Function that asked user input for password for the first time."""
     answer_user_pass = input(str('Please enter password: '))
     answer_user_pass_1 = input(str('Please enter password again: '))
     if answer_user_pass == answer_user_pass_1:
-        return answer_user_pass
+        hashed_password = users_utilities.hash_password(answer_user_pass)
+        return hashed_password
     else:
         return "Wrong"
 
