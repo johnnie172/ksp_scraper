@@ -36,4 +36,6 @@ def add_item(item_link):
 if __name__ == '__main__':
     # update_all_prices()
     # add_item(item_link)
-    # print(users_utilities.user_login())
+    # users_utilities.user_signup()
+    print(users_utilities.user_login())
+    pass

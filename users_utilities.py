@@ -1,7 +1,9 @@
 import user_input_utilities, consts
 from main import dbq
 import logging
-import bcrypt
+import hashlib
+import binascii
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -13,9 +15,13 @@ def user_login():
     id = user[0]
     email = user[1]
     password = user[2]
-    if check_password(password):
+    if verify_password(password):
         logger.debug(f'User with email:{email} is logged in!')
         return (id, email)
+    else:
+        logger.debug('Password not matches!')
+        print('Wrong password!')
+        return False
 
 
 def user_signup():
@@ -31,24 +37,6 @@ def user_signup():
     return user_id
 
 
-def hash_password(password):
-    """Bycrypt password"""
-    salt = bcrypt.gensalt()
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
-    logger.debug('Hashing password.')
-    return hashed_password.decode('utf-8')
-
-
-def check_password(hashed_password):
-    """Checking bycrypt password"""
-    if bcrypt.checkpw(user_input_utilities.input_user_password().encode('utf8'), hashed_password.encode('utf8')):
-        logger.debug('Password matches!')
-        return True
-    logger.debug('Password not matches!')
-    print('Wrong password!')
-    return False
-
-
 def user_log_out():
     pass
 
@@ -56,3 +44,44 @@ def user_log_out():
 def notify_out_of_stock():
     # todo send notificetions
     pass
+
+
+def hash_password(password):
+    """Hash a password for storing."""
+    salt = hashlib.sha256(os.urandom(60)).hexdigest().encode('ascii')
+    pwdhash = hashlib.pbkdf2_hmac('sha512', password.encode('utf-8'),
+                                  salt, 100000)
+    pwdhash = binascii.hexlify(pwdhash)
+    logger.debug('Hashing password.')
+    return (salt + pwdhash).decode('ascii')
+
+
+def verify_password(stored_password):
+    """Verify a stored password against one provided by user"""
+    salt = stored_password[:64]
+    stored_password = stored_password[64:]
+    pwdhash = hashlib.pbkdf2_hmac('sha512',
+                                  user_input_utilities.input_user_password().encode('utf-8'),
+                                  salt.encode('ascii'),
+                                  100000)
+    pwdhash = binascii.hexlify(pwdhash).decode('ascii')
+    logger.debug('Verifying password.')
+    return pwdhash == stored_password
+
+
+# def hash_password(password):
+#     """Hashing password"""
+#     salt = bcrypt.gensalt()
+#     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+#     logger.debug('Hashing password.')
+#     return hashed_password.decode('utf-8')
+
+
+# def check_password(hashed_password):
+#     """Checking hashed password"""
+#     if bcrypt.checkpw(user_input_utilities.input_user_password().encode('utf8'), hashed_password.encode('utf8')):
+#         logger.debug('Password matches!')
+#         return True
+#     logger.debug('Password not matches!')
+#     print('Wrong password!')
+#     return False
