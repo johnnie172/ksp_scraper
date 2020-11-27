@@ -50,6 +50,6 @@ class TestUserInputUtilities(unittest.TestCase):
 
     @mock.patch('builtins.input', side_effect=["secret", "secret", "no", "yes", "ok", "ok"])
     def test_input_user_password_sign_up(self, side_effect):
-        self.assertEqual(user_input_utilities.input_user_password_sign_up(), "secret")
+        self.assertEqual(len(user_input_utilities.input_user_password_sign_up()), 192)
         self.assertEqual(user_input_utilities.input_user_password_sign_up(), "Wrong")
-        self.assertEqual(user_input_utilities.input_user_password_sign_up(), "ok")
+        self.assertEqual(len(user_input_utilities.input_user_password_sign_up()), 192)
