@@ -3,6 +3,8 @@ import user_input_utilities, request_utilities, data_parser,\
 from Database import Database
 from DBQueries import DBQueries
 import logging
+
+from email_utilities import send_mail
 from tasks import update_all_prices
 
 logging.basicConfig(filename='ksp_scraper.log', level=10
@@ -37,5 +39,5 @@ if __name__ == '__main__':
     # update_all_prices()
     # add_item(item_link)
     # users_utilities.user_signup()
-    print(users_utilities.user_login())
+    # print(users_utilities.user_login())
     pass
