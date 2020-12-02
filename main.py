@@ -40,13 +40,13 @@ def add_item(item_link):
 if __name__ == '__main__':
     item_id_and_price_list = update_all_prices()
     logger.debug(f'{item_id_and_price_list}')
-    id_list_to_pass = [(item[0], ) for item in item_id_and_price_list]
+    id_list_to_pass = [(item[0],) for item in item_id_and_price_list]
     logger.debug(f'{id_list_to_pass}')
-    target_price_list  = dbq.check_target_prices(tuple(id_list_to_pass))
+    target_price_list = dbq.check_target_prices(tuple(id_list_to_pass))
     logger.debug(f'{target_price_list}')
-    #todo function that runs the check target price
+    # #todo function that runs the check target price
 
-
+    # print(users_utilities.notify_out_of_stock(([(22,)]), 1))
 
     # add_item(item_link)
     # users_utilities.user_signup()

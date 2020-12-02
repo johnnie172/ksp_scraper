@@ -42,9 +42,8 @@ def user_log_out():
 
 
 def notify_out_of_stock(users_id_records, item_id):
-    """Notify for users that itme is out of stock."""
-
-    #todo add titles to the mail
+    """Notify for users that item is out of stock."""
+    item_title = dbq.select_row(f'SELECT title FROM items WHERE id = {item_id}')[0]
     email_records = dbq.select_emails_to_notify(tuple(users_id_records))
     for user in email_records:
         user_email = user[0]
@@ -72,7 +71,6 @@ def verify_password(stored_password):
     pwdhash = binascii.hexlify(pwdhash).decode('ascii')
     logger.debug('Verifying password.')
     return pwdhash == stored_password
-
 
 # def hash_password(password):
 #     """Hashing password"""

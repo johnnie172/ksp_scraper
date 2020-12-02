@@ -20,7 +20,6 @@ SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD')
 
 EMAIL_MESSAGE_TITLE = "KSP scraper notify"
 
-
 URL_TO_ADD_UIN = 'https://ksp.co.il/?uin='
 
 USER_EMAIL_ERROR_MESSAGE = 'You have entered invalid Email address'

@@ -19,7 +19,9 @@ class DBQueries:
         self.db.get_connection()
         with self.db.conn.cursor() as cur:
             cur.execute(query, vars)
+            logger.debug(f'Query is: {query}.')
             record = cur.fetchone()
+            logger.info(f"{cur.rowcount} rows affected.")
             return record
 
     def select_rows(self, query):
@@ -28,7 +30,18 @@ class DBQueries:
         with self.db.conn.cursor() as cur:
             cur.execute(query)
             records = [row for row in cur.fetchall()]
+            logger.info(f"{cur.rowcount} rows affected.")
             return records
+
+    def select_row(self, query):
+        """Run a SQL query to select row from table."""
+        self.db.get_connection()
+        with self.db.conn.cursor() as cur:
+            cur.execute(query)
+            logger.debug(f'Query is: {query}.')
+            record = cur.fetchone()
+            logger.info(f"{cur.rowcount} rows affected.")
+            return record
 
     def select_rows_dict_cursor(self, query):
         """Run a SELECT query and return list of dicts."""
@@ -213,7 +226,6 @@ class DBQueries:
             records = cur.fetchall()
             logger.info(f"{cur.rowcount} rows affected.")
         return records
-
 
     def select_emails_to_notify(self, users_id_list):
         """Run select query to get users mails from id's."""
