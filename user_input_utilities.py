@@ -63,14 +63,5 @@ def input_user_password_sign_up():
         hashed_password = users_utilities.hash_password(answer_user_pass)
         return hashed_password
     else:
-        return "Wrong"
-
-
-def user_login():
-    """Function that login user."""
-    pass
-
-
-def user_signup():
-    """Function that signup user."""
-    pass
+        logger.debug(consts.UNMATCHED_PASSWORD_MESSAGE)
+        raise Exception(consts.UNMATCHED_PASSWORD_MESSAGE)

@@ -18,11 +18,15 @@ SMTP_HOST = 'smtp.gmail.com'
 SMTP_ADDRESS = 'mailservicepython@gmail.com'
 SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD')
 
+EMAIL_MESSAGE_TITLE = "KSP scraper notify"
+
 
 URL_TO_ADD_UIN = 'https://ksp.co.il/?uin='
 
 USER_EMAIL_ERROR_MESSAGE = 'You have entered invalid Email address'
 EMAIL_ALREADY_EXISTS_MESSAGE = 'Email is in our system, please try again.'
+
+UNMATCHED_PASSWORD_MESSAGE = 'You have entered unmatched passwords!'
 
 LINK_ERROR_MESSAGE = 'Sorry we cannot use this link, Please try again.'
 TARGET_PRICE_ERROR_MESSAGE = 'Sorry the target price is not valid, please make sure you entered numbers only(not ' \

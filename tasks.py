@@ -2,13 +2,11 @@ from Database import Database
 from DBQueries import DBQueries
 import consts, request_utilities, data_parser, db_config, users_utilities
 from celery import Celery
-# from celery.utils.log import get_task_logger
 import logging
 
 app = Celery()
 app.config_from_object('celery_config')
 
-# logger = get_task_logger(__name__)
 logger = logging.getLogger(__name__)
 
 
@@ -38,8 +36,9 @@ def update_all_prices():
                 new_list_of_items.append((item_id, price))
             else:
                 db_queries.change_to_out_of_stock(uin[1])
-                users_utilities.notify_out_of_stock()
+                users_utilities.notify_out_of_stock(db_queries.check_users_for_out_of_stock_item(uin[0]))
         except:
             pass
     db_queries.add_prices(new_list_of_items)
     db_queries.check_for_lowest_price_and_update()
+    return new_list_of_items

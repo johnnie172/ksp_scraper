@@ -178,7 +178,6 @@ class DBQueries:
 
     def change_to_out_of_stock(self, uin):
         """Run update for in stock column in items table."""
-
         query = "UPDATE items SET in_stock = false\
         WHERE uin = %s"
         vars = (uin,)
@@ -187,3 +186,43 @@ class DBQueries:
             cur.execute(query, vars)
             self.db.conn.commit()
             logger.info(f"{cur.rowcount} rows affected.")
+
+    def check_target_prices(self, item_id_list):
+        """Run select query for checking if target price is reached, returns user_id, item_id for those who met
+         the conditions."""
+        query = '''SELECT DISTINCT ui.user_id,ui.item_id FROM users_items as ui LEFT JOIN prices as p on p.item_id 
+        = ui.item_id WHERE ui.item_id in %s AND ui.target_price <= p.price'''
+        self.db.get_connection()
+        with self.db.conn.cursor() as cur:
+            cur.execute(query, (item_id_list,))
+            logger.debug(f'Query is: {query}.')
+            self.db.conn.commit()
+            records = cur.fetchall()
+            logger.info(f"{cur.rowcount} rows affected.")
+        return records
+
+    def check_users_for_out_of_stock_item(self, item_id):
+        """Run select query for all the users to notify, returns the list."""
+        query = "SELECT user_id FROM users_items WHERE item_id = %s"
+        vars = (item_id,)
+        self.db.get_connection()
+        with self.db.conn.cursor() as cur:
+            logger.debug(f'Query is: {query}.')
+            cur.execute(query, vars)
+            self.db.conn.commit()
+            records = cur.fetchall()
+            logger.info(f"{cur.rowcount} rows affected.")
+        return records
+
+
+    def select_emails_to_notify(self, users_id_list):
+        """Run select query to get users mails from id's."""
+        query = 'SELECT email FROM users WHERE id IN %s'
+        self.db.get_connection()
+        with self.db.conn.cursor() as cur:
+            logger.debug(f'Query is: {query}.')
+            cur.execute(query, (users_id_list,))
+            self.db.conn.commit()
+            records = cur.fetchall()
+            logger.info(f"{cur.rowcount} rows affected.")
+        return records

@@ -1,4 +1,4 @@
-import user_input_utilities, consts
+import user_input_utilities, consts, email_utilities
 from main import dbq
 import logging
 import hashlib
@@ -41,9 +41,14 @@ def user_log_out():
     pass
 
 
-def notify_out_of_stock():
-    # todo send notificetions
-    pass
+def notify_out_of_stock(users_id_records, item_id):
+    """Notify for users that itme is out of stock."""
+
+    #todo add titles to the mail
+    email_records = dbq.select_emails_to_notify(tuple(users_id_records))
+    for user in email_records:
+        user_email = user[0]
+        email_utilities.send_out_of_stock_mail(user_email, item_title)
 
 
 def hash_password(password):
