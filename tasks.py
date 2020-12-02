@@ -41,4 +41,12 @@ def update_all_prices():
             pass
     db_queries.add_prices(new_list_of_items)
     db_queries.check_for_lowest_price_and_update()
+    # todo check if there is a way to remove from this function:
+    id_list_to_pass = [(item[0],) for item in new_list_of_items]
+    logger.debug(f'{id_list_to_pass}')
+    target_price_list = db_queries.check_target_prices(tuple(id_list_to_pass))
+    if target_price_list:
+        pass
+    #up to here
+
     return new_list_of_items

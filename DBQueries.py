@@ -204,7 +204,7 @@ class DBQueries:
         """Run select query for checking if target price is reached, returns user_id, item_id for those who met
          the conditions."""
         query = '''SELECT DISTINCT ui.user_id,ui.item_id FROM users_items as ui LEFT JOIN prices as p on p.item_id 
-        = ui.item_id WHERE ui.item_id in %s AND ui.target_price <= p.price'''
+        = ui.item_id WHERE ui.item_id in %s AND ui.target_price <= p.price ORDER BY ui.item_id'''
         self.db.get_connection()
         with self.db.conn.cursor() as cur:
             cur.execute(query, (item_id_list,))

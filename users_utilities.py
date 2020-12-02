@@ -49,6 +49,50 @@ def notify_out_of_stock(users_id_records, item_id):
         user_email = user[0]
         email_utilities.send_out_of_stock_mail(user_email, item_title)
 
+def notify_target_price(users_id_records):
+    """Notify for users that item is at the target price."""
+    logger.debug(f'users_id_records are:{users_id_records}')
+    current_item_id = None
+    count = 0
+    for user in users_id_records:
+        count += 1
+        logger.debug(f'usersis:{user}')
+        current_users_ids = []
+        user_id = user[0]
+        item_id = user[1]
+        if current_item_id is None:
+            current_item_id = item_id
+
+        if current_item_id == item_id:
+            current_users_ids.append(user_id)
+            logger.debug(f'current_item_id is: {current_item_id}')
+            logger.debug(f'current_users_ids is: {current_users_ids}')
+        else:
+            item_uin = dbq.select_row(f'SELECT uin FROM items WHERE id = {item_id}')[0]
+            email_records = dbq.select_emails_to_notify(tuple(current_users_ids))
+            for user_to_notify in email_records:
+                logger.debug(f'user is:{user_to_notify}')
+                user_email = user_to_notify[0]
+                logger.debug(f'email is: {user_email}')
+                logger.debug(f'uin is: {item_uin}')
+                email_utilities.send_target_price_mail(user_email, item_uin)
+            current_users_ids = []
+        if len(users_id_records) == count:
+            item_uin = dbq.select_row(f'SELECT uin FROM items WHERE id = {item_id}')[0]
+            email_records = dbq.select_emails_to_notify(tuple(current_users_ids))
+            for user_to_notify in email_records:
+                logger.debug(f'user is:{user_to_notify}')
+                user_email = user_to_notify[0]
+                logger.debug(f'email is: {user_email}')
+                logger.debug(f'uin is: {item_uin}')
+                email_utilities.send_target_price_mail(user_email, item_uin)
+            current_users_ids = []
+
+    #todo: it sent only to user id 23 and not to user id 22
+
+
+    pass
+
 
 def hash_password(password):
     """Hash a password for storing."""

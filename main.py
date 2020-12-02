@@ -44,7 +44,9 @@ if __name__ == '__main__':
     logger.debug(f'{id_list_to_pass}')
     target_price_list = dbq.check_target_prices(tuple(id_list_to_pass))
     logger.debug(f'{target_price_list}')
-    # #todo function that runs the check target price
+    # # #todo function that runs the check target price
+    users_utilities.notify_target_price(target_price_list)
+    logger.debug(f'start')
 
     # print(users_utilities.notify_out_of_stock(([(22,)]), 1))
 
