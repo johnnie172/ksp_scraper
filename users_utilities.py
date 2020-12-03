@@ -49,49 +49,45 @@ def notify_out_of_stock(users_id_records, item_id):
         user_email = user[0]
         email_utilities.send_out_of_stock_mail(user_email, item_title)
 
+
 def notify_target_price(users_id_records):
     """Notify for users that item is at the target price."""
     logger.debug(f'users_id_records are:{users_id_records}')
-    current_item_id = None
-    count = 0
+
+    users_list = []
+    current_item_id = users_id_records[0][1]
+    items_users_dict = {}
+
+    #Creating dict with user id as key and list of users_id's as value:
     for user in users_id_records:
-        count += 1
-        logger.debug(f'usersis:{user}')
-        current_users_ids = []
+        logger.debug(f'user is:{user}')
         user_id = user[0]
         item_id = user[1]
-        if current_item_id is None:
-            current_item_id = item_id
 
         if current_item_id == item_id:
-            current_users_ids.append(user_id)
-            logger.debug(f'current_item_id is: {current_item_id}')
-            logger.debug(f'current_users_ids is: {current_users_ids}')
+            items_users_dict = {}
+            items_users_dict[item_id] = users_list
+            users_list.append(user_id)
+            logger.debug(f'items_users_dict is: {items_users_dict}')
         else:
-            item_uin = dbq.select_row(f'SELECT uin FROM items WHERE id = {item_id}')[0]
-            email_records = dbq.select_emails_to_notify(tuple(current_users_ids))
-            for user_to_notify in email_records:
-                logger.debug(f'user is:{user_to_notify}')
-                user_email = user_to_notify[0]
-                logger.debug(f'email is: {user_email}')
-                logger.debug(f'uin is: {item_uin}')
-                email_utilities.send_target_price_mail(user_email, item_uin)
-            current_users_ids = []
-        if len(users_id_records) == count:
-            item_uin = dbq.select_row(f'SELECT uin FROM items WHERE id = {item_id}')[0]
-            email_records = dbq.select_emails_to_notify(tuple(current_users_ids))
-            for user_to_notify in email_records:
-                logger.debug(f'user is:{user_to_notify}')
-                user_email = user_to_notify[0]
-                logger.debug(f'email is: {user_email}')
-                logger.debug(f'uin is: {item_uin}')
-                email_utilities.send_target_price_mail(user_email, item_uin)
-            current_users_ids = []
+            users_list = []
+            logger.debug(f'users_list is: {users_list}')
+            items_users_dict[item_id] = users_list
+            users_list.append(user_id)
+            logger.debug(f'items_users_dict is: {items_users_dict}')
+    #Sending for each item mails to all the users:
+    for item in items_users_dict:
+        logger.debug(f'item is: {item}')
+        item_uin = dbq.select_row(f'SELECT uin FROM items WHERE id = {item}')
+        current_users_ids = items_users_dict[item]
+        logger.debug(f'current_users_ids is: {current_users_ids}')
+        email_records = dbq.select_emails_to_notify(tuple(current_users_ids))
+        logger.debug(f'email_records are: {email_records}')
 
-    #todo: it sent only to user id 23 and not to user id 22
-
-
-    pass
+        for email in email_records:
+            logger.debug(f'email is: {email}')
+            logger.debug(f'uin is: {item_uin}')
+            email_utilities.send_target_price_mail(email[0], item_uin[0])
 
 
 def hash_password(password):
