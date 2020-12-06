@@ -15,6 +15,7 @@ def user_login():
     id = user[0]
     email = user[1]
     password = user[2]
+
     if verify_password(password):
         logger.debug(f'User with email:{email} is logged in!')
         return (id, email)
@@ -29,10 +30,12 @@ def user_signup():
     email = user_input_utilities.input_user_email()
     password = user_input_utilities.input_user_password_sign_up()
     user_id = dbq.add_user(email, password)
+
     if user_id == None:
         print(consts.EMAIL_ALREADY_EXISTS_MESSAGE)
         logger.debug(f'{consts.EMAIL_ALREADY_EXISTS_MESSAGE}, email is: {email}.')
         return None
+
     logger.debug(f'New user is added, user id is:{user_id}')
     return user_id
 
@@ -42,7 +45,7 @@ def user_log_out():
 
 
 def notify_out_of_stock(users_id_records, item_id):
-    """Notify for users that item is out of stock."""
+    """Notify users that item is out of stock."""
     item_title = dbq.select_row(f'SELECT title FROM items WHERE id = {item_id}')[0]
     email_records = dbq.select_emails_to_notify(tuple(users_id_records))
     for user in email_records:
@@ -51,14 +54,13 @@ def notify_out_of_stock(users_id_records, item_id):
 
 
 def notify_target_price(users_id_records):
-    """Notify for users that item is at the target price."""
+    """Notify users that item is at the target price."""
     logger.debug(f'users_id_records are:{users_id_records}')
 
     users_list = []
     current_item_id = users_id_records[0][1]
     items_users_dict = {}
 
-    #Creating dict with user id as key and list of users_id's as value:
     for user in users_id_records:
         logger.debug(f'user is:{user}')
         user_id = user[0]
@@ -75,7 +77,7 @@ def notify_target_price(users_id_records):
             items_users_dict[item_id] = users_list
             users_list.append(user_id)
             logger.debug(f'items_users_dict is: {items_users_dict}')
-    #Sending for each item mails to all the users:
+
     for item in items_users_dict:
         logger.debug(f'item is: {item}')
         item_uin = dbq.select_row(f'SELECT uin FROM items WHERE id = {item}')
@@ -84,11 +86,12 @@ def notify_target_price(users_id_records):
         email_records = dbq.select_emails_to_notify(tuple(current_users_ids))
         logger.debug(f'email_records are: {email_records}')
 
+        emails_to_send = "" #Trying to sending an email to multiple recipients
         for email in email_records:
             logger.debug(f'email is: {email}')
             logger.debug(f'uin is: {item_uin}')
-            email_utilities.send_target_price_mail(email[0], item_uin[0])
-
+            emails_to_send += (f', {email[0]}')
+        email_utilities.send_target_price_mail(emails_to_send, item_uin[0])
 
 def hash_password(password):
     """Hash a password for storing."""
