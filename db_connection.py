@@ -17,3 +17,4 @@ def return_dbq():
     dbq = DBQueries(db)
 
 class DBConnection:
+    pass
