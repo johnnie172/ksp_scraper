@@ -20,5 +20,5 @@ CREATE TABLE IF NOT EXISTS users_items (
 CREATE TABLE IF NOT EXISTS prices (
     item_id integer NOT NULL,
     price NUMERIC NOT NULL,
-    times_tamp timestamp NOT NULL DEFAULT NOW()
+    time_stamp timestamp NOT NULL DEFAULT NOW()
 );

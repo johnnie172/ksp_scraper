@@ -1,5 +1,5 @@
 import logging
-import consts, users_utilities
+import consts, UserUtilities
 import re
 
 logger = logging.getLogger(__name__)
@@ -60,7 +60,7 @@ def input_user_password_sign_up():
     answer_user_pass = input(str('Please enter password: '))
     answer_user_pass_1 = input(str('Please enter password again: '))
     if answer_user_pass == answer_user_pass_1:
-        hashed_password = users_utilities.hash_password(answer_user_pass)
+        hashed_password = UserUtilities.hash_password(answer_user_pass)
         return hashed_password
     else:
         logger.debug(consts.UNMATCHED_PASSWORD_MESSAGE)

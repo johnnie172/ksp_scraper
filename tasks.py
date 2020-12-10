@@ -1,29 +1,22 @@
-from Database import Database
-from DBQueries import DBQueries
-import consts, request_utilities, data_parser, db_config, users_utilities
+import consts, request_utilities, data_parser, db_config, db_connection
+from UserUtilities import UserUtilities
 from celery import Celery
 import logging
+import time
+from db_connection import dbq
 
 app = Celery()
 app.config_from_object('celery_config')
-
 logger = logging.getLogger(__name__)
-
-
-def connect_to_db():
-    database = Database(db_config)
-    database.connect()
-    database._db_setup()
-    return database
 
 
 @app.task
 def update_all_prices():
-    db = connect_to_db()
-    db_queries = DBQueries(db)
-    list_of_items = db_queries.select_all_uin()
+    db_connection.return_dbq()
+    user_utilities = UserUtilities(dbq)
+    list_of_items = dbq.select_all_uin()
     new_list_of_items = []
-    logger.debug(f'list of uin to check: {new_list_of_items}.')
+    logger.debug(f'List of uin to check: {new_list_of_items}.')
     for uin in list_of_items:
         logger.debug(f'The url is: {consts.URL_TO_ADD_UIN}{uin[1]}.')
         text = request_utilities.get_text_from_url(consts.URL_TO_ADD_UIN + uin[1])
@@ -35,18 +28,22 @@ def update_all_prices():
                 item_id = uin[0]
                 new_list_of_items.append((item_id, price))
             else:
-                db_queries.change_to_out_of_stock(uin[1])
-                users_utilities.notify_out_of_stock(db_queries.check_users_for_out_of_stock_item(uin[0]))
+                dbq.change_to_out_of_stock(uin[1])
+                user_utilities.notify_out_of_stock(dbq.check_users_for_out_of_stock_item(uin[0]))
         except:
-            pass
-    db_queries.add_prices(new_list_of_items)
-    db_queries.check_for_lowest_price_and_update()
+            print(consts.GENERIC_ERROR_MESSAGE)
+
+    dbq.add_prices(new_list_of_items)
+    dbq.check_for_lowest_price_and_update()
     # todo check if there is a way to remove from this function:
     id_list_to_pass = [(item[0],) for item in new_list_of_items]
     logger.debug(f'{id_list_to_pass}')
-    target_price_list = db_queries.check_target_prices(tuple(id_list_to_pass))
+    target_price_list = dbq.check_target_prices(tuple(id_list_to_pass))
     if target_price_list:
-        pass
-    #up to here
-
+        logger.debug(f'Sleeping for 20 seconds.')
+        time.sleep(20)
+        logger.debug(f'Running notify_target_price')
+        logger.debug(f'target price list: {target_price_list}')
+        # todo check why I need the None
+        user_utilities.notify_target_price(target_price_list)
     return new_list_of_items

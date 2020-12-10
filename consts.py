@@ -6,7 +6,6 @@ import os
 # DATABASE_HOST = os.environ.get('DATABASE_HOST')
 # DATABASE_PORT = os.environ.get('DATABASE_PORT')
 # DATABASE_TABLES_SETUP_FILE = os.environ.get('DATABASE_TABLES_SETUP_FILE')
-
 # DATABASE_NAME = 'scraper_db'
 # DATABASE_USERNAME = 'postgres'
 # DATABASE_PASSWORD = 'Post5432'

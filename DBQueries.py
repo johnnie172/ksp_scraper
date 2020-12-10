@@ -1,4 +1,4 @@
-from Database import Database
+from DataBase import DataBase
 import psycopg2
 from psycopg2.extras import DictCursor
 from psycopg2.errors import UniqueViolation

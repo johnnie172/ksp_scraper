@@ -1,6 +1,6 @@
 import unittest
 from unittest import mock
-import users_utilities
+import UserUtilities
 import consts
 
 

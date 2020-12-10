@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class Database:
+class DataBase:
     """PostgreSQL Database class."""
 
     def __init__(self, db_config):
@@ -44,7 +44,7 @@ class Database:
 
     def get_connection(self):
         """Returning connection item if None is exist"""
-        if self.conn.closed != 0:
+        if self.conn is None or self.conn.closed != 0:
             self.connect()
         logger.debug(f'The connection object is: {self.conn}.')
         return self.conn
