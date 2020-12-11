@@ -17,8 +17,8 @@ celery_ignore_result = False
 
 
 app.conf.beat_schedule = {
-    'update-prices-every-15-minutes': {
+    'update-prices-every-1-minutes': {
         'task': 'tasks.update_all_prices',
-        'schedule': timedelta(minutes=15),
+        'schedule': timedelta(minutes=1),
     },
 }

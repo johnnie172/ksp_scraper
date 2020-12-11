@@ -27,7 +27,7 @@ class DataBase:
             self.conn.commit()
         logger.info(f'The script {db_config.DATABASE_TABLES_SETUP_FILE} has run.')
 
-    def connect(self):
+    def _connect(self):
         """Connect to a Postgres database."""
         try:
             self.conn = psycopg2.connect(
@@ -45,6 +45,6 @@ class DataBase:
     def get_connection(self):
         """Returning connection item if None is exist"""
         if self.conn is None or self.conn.closed != 0:
-            self.connect()
+            self._connect()
         logger.debug(f'The connection object is: {self.conn}.')
         return self.conn

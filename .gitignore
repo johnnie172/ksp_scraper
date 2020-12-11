@@ -4,3 +4,4 @@
 **/__pycache__
 *.pyc
 db_config.py
+smtp_config.py

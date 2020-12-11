@@ -13,10 +13,6 @@ import os
 # DATABASE_PORT = '5432'
 # DATABASE_TABLES_SETUP_FILE = 'create_tables.sql'
 
-SMTP_HOST = 'smtp.gmail.com'
-SMTP_ADDRESS = 'mailservicepython@gmail.com'
-SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD')
-
 EMAIL_MESSAGE_TITLE = "KSP scraper notify"
 
 URL_TO_ADD_UIN = 'https://ksp.co.il/?uin='

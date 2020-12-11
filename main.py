@@ -35,11 +35,10 @@ if __name__ == '__main__':
     # # # #todo function that runs the check target price
     # users_utilities.notify_target_price(target_price_list)
     logger.debug(f'start')
-
+    # update_all_prices()
     # print(users_utilities.notify_out_of_stock(([(22,)]), 1))
 
-    update_all_prices()
-
+    # update_all_prices.delay()
     # add_item(item_link)
     # users_utilities.user_signup()
     # print(users_utilities.user_login())
