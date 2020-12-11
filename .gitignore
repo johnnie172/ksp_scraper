@@ -5,3 +5,4 @@
 *.pyc
 db_config.py
 smtp_config.py
+celerybeat-schedule.db
