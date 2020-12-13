@@ -6,3 +6,4 @@
 db_config.py
 smtp_config.py
 celerybeat-schedule.db
+celery_config.py

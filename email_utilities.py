@@ -27,7 +27,6 @@ def send_target_price_mail(email, item_uin):
     msg['To'] = email
     msg['Subject'] = consts.EMAIL_MESSAGE_TITLE
     msg.attach(MIMEText(message, 'plain'))
-    print(msg)
     get_smtp_service().send_message(msg)
     logger.debug(f'Sending email to: {email}, about target price to uin:{item_uin}.')
 
