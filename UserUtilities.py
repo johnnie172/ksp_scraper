@@ -52,10 +52,13 @@ class UserUtilities:
         self.logger.debug(f'item_id is: {item_id}.')
         item_title = self.db_queries.select_row(f'SELECT title FROM items WHERE id = {item_id}')[0]
         email_records = self.db_queries.select_emails_to_notify(tuple(users_id_records))
-        for user in email_records:
-            user_email = user[0]
-            #todo change notify to few mails and not one at a time(like in target price)
-            email_utilities.send_out_of_stock_mail(user_email, item_title)
+
+        emails_to_send = ""
+        for email in email_records:
+            emails_to_send += (f', {email[0]}')
+        email_utilities.send_out_of_stock_mail(emails_to_send, item_title)
+
+        # todo in dbqueries.check_users_for_out_of_stock_item the same as the target price
 
     def notify_target_price(self, users_id_records):
         """Notify users that item is at the target price."""
@@ -90,7 +93,7 @@ class UserUtilities:
             email_records = self.db_queries.select_emails_to_notify(tuple(current_users_ids))
             self.logger.debug(f'email_records are: {email_records}')
 
-            emails_to_send = ""  # Trying to sending an email to multiple recipients
+            emails_to_send = ""
             for email in email_records:
                 self.logger.debug(f'email is: {email}')
                 self.logger.debug(f'uin is: {item_uin}')
