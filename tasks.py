@@ -17,11 +17,11 @@ def celery_main_task():
     items_list = orchestrator.get_items_data(db_queries=db_connection.get_db_queries())
 
     items_to_store = items_list[0]
+    out_of_stock_items = items_list[1]
 
-    if items_list[1] != []:
-        out_of_stock_items = tuple(items_list[1])
+    if out_of_stock_items != []:
         orchestrator.out_of_stock_manger(db_queries=db_queries, user_utilities=user_utilities,
-                                        out_of_stock_items=out_of_stock_items)
+                                        out_of_stock_items=tuple(out_of_stock_items))
 
     target_price_list = orchestrator.storing_and_sorting_items_data(db_queries, items_to_store)
     user_utilities.notify_target_price(target_price_list)
