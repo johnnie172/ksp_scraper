@@ -175,8 +175,7 @@ class DBQueries:
             cur.execute(query)
             logger.debug(f'Query is: {query}.')
             records = cur.fetchall()
-        self.db.conn.commit()
-        logger.debug('Committed query')
+
         if len(records) > 0:
             logger.debug(f'Len of records is {len(records)}.')
             with self.db.conn.cursor() as cur:
@@ -189,6 +188,7 @@ class DBQueries:
             self.db.conn.commit()
         logger.debug("Committed function.")
 
+    #todo can change this to a list of items uin instead of just one.
     def change_to_out_of_stock(self, uin):
         """Run update for in stock column in items table."""
         query = "UPDATE items SET in_stock = false\
@@ -209,11 +209,11 @@ class DBQueries:
         with self.db.conn.cursor() as cur:
             cur.execute(query, (item_id_list,))
             logger.debug(f'Query is: {query}.')
-            self.db.conn.commit()
             records = cur.fetchall()
             logger.info(f"{cur.rowcount} rows affected.")
         return records
 
+    # todo can change this to a list of users id instead of just one.
     def check_users_for_out_of_stock_item(self, item_id):
         """Run select query for all the users to notify, returns the list."""
         query = "SELECT user_id FROM users_items WHERE item_id = %s"
@@ -222,7 +222,6 @@ class DBQueries:
         with self.db.conn.cursor() as cur:
             logger.debug(f'Query is: {query}.')
             cur.execute(query, vars)
-            self.db.conn.commit()
             records = cur.fetchall()
             logger.info(f"{cur.rowcount} rows affected.")
         return records
@@ -234,7 +233,6 @@ class DBQueries:
         with self.db.conn.cursor() as cur:
             logger.debug(f'Query is: {query}.')
             cur.execute(query, (users_id_list,))
-            self.db.conn.commit()
             records = cur.fetchall()
             logger.info(f"{cur.rowcount} rows affected.")
         return records
