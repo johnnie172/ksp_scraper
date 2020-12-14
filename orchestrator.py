@@ -14,6 +14,7 @@ def get_items_data(db_queries):
     logger.debug(f'List of uin to check: {list_of_items}.')
 
     for uin in list_of_items:
+        item_id = uin[0]
         logger.debug(f'The url is: {consts.URL_TO_ADD_UIN}{uin[1]}.')
         text = request_utilities.get_text_from_url(consts.URL_TO_ADD_UIN + uin[1])
         try:
@@ -21,10 +22,9 @@ def get_items_data(db_queries):
             if title_and_price:
                 logger.debug(f'Title and price are: {title_and_price}.')
                 price = data_parser.change_price_from_str_to_decimal(title_and_price[1])
-                item_id = uin[0]
                 items_to_store_and_notify.append((item_id, price))
             else:
-                out_of_stock_items.append((uin[0],))
+                out_of_stock_items.append((item_id,))
         except:
             logger.error(consts.GENERIC_ERROR_MESSAGE)
             print(consts.GENERIC_ERROR_MESSAGE)
@@ -45,7 +45,7 @@ def storing_and_sorting_items_data(db_queries, items_to_store):
 def out_of_stock_manger(db_queries, user_utilities, out_of_stock_items):
     """Changing to out of stock and notifying users."""
 
-    records = db_queries.select_email_item_title_to_out_of_stock(out_of_stock_items)
+    records = db_queries.select_emails_for_out_of_stock_items(out_of_stock_items)
     db_queries.change_to_out_of_stock(out_of_stock_items)
 
     for record in records:

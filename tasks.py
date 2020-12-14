@@ -19,7 +19,7 @@ def celery_main_task():
     items_to_store = items_list[0]
     out_of_stock_items = items_list[1]
 
-    if out_of_stock_items != []:
+    if out_of_stock_items:
         orchestrator.out_of_stock_manger(db_queries=db_queries, user_utilities=user_utilities,
                                         out_of_stock_items=tuple(out_of_stock_items))
 

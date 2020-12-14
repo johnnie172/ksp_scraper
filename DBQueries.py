@@ -240,9 +240,9 @@ class DBQueries:
             logger.info(f"{cur.rowcount} rows fetched.")
         return records
 
-    def select_email_item_title_to_out_of_stock(self, items_id_list):
-        """Run SELECT query to get users mail and item id and title for each out of stock item id,
-        returning tuples with .id .title and .emails."""
+    def select_emails_for_out_of_stock_items(self, items_id_list):
+        """Run SELECT query to get users email and item title for each out of stock item id,
+        returning tuples with .title and .emails."""
         query = '''SELECT DISTINCT i.title, string_agg(u.email, ', ') as emails FROM items as i
                     LEFT JOIN users_items as ui on ui.item_id = i.id
                     LEFT JOIN users as u on u.id = ui.user_id
