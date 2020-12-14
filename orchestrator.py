@@ -24,7 +24,7 @@ def get_items_data(db_queries):
                 item_id = uin[0]
                 items_to_store_and_notify.append((item_id, price))
             else:
-                out_of_stock_items.append(uin)
+                out_of_stock_items.append((uin[0],))
         except:
             logger.error(consts.GENERIC_ERROR_MESSAGE)
             print(consts.GENERIC_ERROR_MESSAGE)
@@ -37,14 +37,19 @@ def storing_and_sorting_items_data(db_queries, items_to_store):
     db_queries.add_prices(items_to_store)
     db_queries.check_for_lowest_price_and_update()
     id_list_to_pass = [(item[0],) for item in items_to_store]
-    logger.debug(f'{id_list_to_pass}')
+    logger.debug(f'id_list_to_pass: {id_list_to_pass}')
     target_price_list = db_queries.check_target_prices(tuple(id_list_to_pass))
     return target_price_list
 
 
 def out_of_stock_manger(db_queries, user_utilities, out_of_stock_items):
     """Changing to out of stock and notifying users."""
-    for item in out_of_stock_items:
-        logger.debug(f'Item is: {item}')
-        db_queries.change_to_out_of_stock(item[1])
-        user_utilities.notify_out_of_stock(db_queries.check_users_for_out_of_stock_item(item[0]), item[0])
+
+    records = db_queries.select_email_item_title_to_out_of_stock(out_of_stock_items)
+    db_queries.change_to_out_of_stock(out_of_stock_items)
+
+    for record in records:
+        logger.debug(f'record is: {record}')
+        item_title = record.title
+        emails_to_send = record.emails
+        user_utilities.notify_out_of_stock(emails_to_send, item_title)
