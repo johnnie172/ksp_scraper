@@ -1,6 +1,7 @@
 from DataBase import DataBase
 import psycopg2
 from psycopg2.extras import DictCursor
+from psycopg2.extras import NamedTupleCursor
 from psycopg2.errors import UniqueViolation
 import logging
 
@@ -167,9 +168,10 @@ class DBQueries:
 
     def check_for_lowest_price_and_update(self):
         """Run SELECT command for checking lowest price, if resulted with changes update lowest."""
-        query = "SELECT DISTINCT id, price\
-                    FROM items INNER JOIN prices ON item_id = id\
-                        WHERE price < lowest ORDER BY id"
+        query = '''SELECT DISTINCT id, price
+                    FROM items INNER JOIN prices ON item_id = id
+                    WHERE price < lowest 
+                    ORDER BY id'''
         self.db.get_connection()
         with self.db.conn.cursor() as cur:
             cur.execute(query)
@@ -188,32 +190,33 @@ class DBQueries:
             self.db.conn.commit()
         logger.debug("Committed function.")
 
-    #todo can change this to a list of items uin instead of just one.
-    def change_to_out_of_stock(self, uin):
+    def change_to_out_of_stock(self, item_id_list):
         """Run update for in stock column in items table."""
-        query = "UPDATE items SET in_stock = false\
-        WHERE uin = %s"
-        vars = (uin,)
+        query = '''UPDATE items 
+                    SET in_stock = false
+                    WHERE id in %s'''
         self.db.get_connection()
         with self.db.conn.cursor() as cur:
-            cur.execute(query, vars)
+            cur.execute(query, (item_id_list,))
             self.db.conn.commit()
             logger.info(f"{cur.rowcount} rows affected.")
 
     def check_target_prices(self, item_id_list):
         """Run select query for checking if target price is reached, returns user_id, item_id for those who met
          the conditions."""
-        query = '''SELECT DISTINCT ui.user_id,ui.item_id FROM users_items as ui LEFT JOIN prices as p on p.item_id 
-        = ui.item_id WHERE ui.item_id in %s AND ui.target_price <= p.price ORDER BY ui.item_id'''
+        query = '''SELECT DISTINCT ui.user_id,ui.item_id 
+                    FROM users_items as ui 
+                    LEFT JOIN prices as p on p.item_id = ui.item_id 
+                    WHERE ui.item_id in %s AND ui.target_price <= p.price 
+                    ORDER BY ui.item_id'''
         self.db.get_connection()
         with self.db.conn.cursor() as cur:
             cur.execute(query, (item_id_list,))
             logger.debug(f'Query is: {query}.')
             records = cur.fetchall()
-            logger.info(f"{cur.rowcount} rows affected.")
+            logger.info(f"{cur.rowcount} rows fetched.")
         return records
 
-    # todo can change this to a list of users id instead of just one.
     def check_users_for_out_of_stock_item(self, item_id):
         """Run select query for all the users to notify, returns the list."""
         query = "SELECT user_id FROM users_items WHERE item_id = %s"
@@ -223,7 +226,7 @@ class DBQueries:
             logger.debug(f'Query is: {query}.')
             cur.execute(query, vars)
             records = cur.fetchall()
-            logger.info(f"{cur.rowcount} rows affected.")
+            logger.info(f"{cur.rowcount} rows fetched.")
         return records
 
     def select_emails_to_notify(self, users_id_list):
@@ -234,5 +237,21 @@ class DBQueries:
             logger.debug(f'Query is: {query}.')
             cur.execute(query, (users_id_list,))
             records = cur.fetchall()
-            logger.info(f"{cur.rowcount} rows affected.")
+            logger.info(f"{cur.rowcount} rows fetched.")
+        return records
+
+    def select_emails_for_out_of_stock_items(self, items_id_list):
+        """Run SELECT query to get users email and item title for each out of stock item id,
+        returning tuples with .title and .emails."""
+        query = '''SELECT DISTINCT i.title, string_agg(u.email, ', ') as emails FROM items as i
+                    LEFT JOIN users_items as ui on ui.item_id = i.id
+                    LEFT JOIN users as u on u.id = ui.user_id
+                    WHERE i.id in %s AND u.email IS NOT null
+                    GROUP BY i.title'''
+        self.db.get_connection()
+        with self.db.conn.cursor(cursor_factory = psycopg2.extras.NamedTupleCursor) as cur:
+            cur.execute(query, (items_id_list,))
+            logger.debug(f'Query is: {query}.')
+            records = cur.fetchall()
+            logger.info(f"{cur.rowcount} rows fetched.")
         return records

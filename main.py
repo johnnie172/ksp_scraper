@@ -8,5 +8,4 @@ logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
     logger.debug(f'start')
-    # celery_main_task()
-    pass
+    celery_main_task()

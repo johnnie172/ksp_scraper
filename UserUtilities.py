@@ -46,19 +46,9 @@ class UserUtilities:
     def user_log_out(self):
         pass
 
-    def notify_out_of_stock(self, users_id_records, item_id):
+    def notify_out_of_stock(self, users_emails, item_title):
         """Notify users that item is out of stock."""
-        self.logger.debug(f'users id records are:{users_id_records}.')
-        self.logger.debug(f'item_id is: {item_id}.')
-        item_title = self.db_queries.select_row(f'SELECT title FROM items WHERE id = {item_id}')[0]
-        email_records = self.db_queries.select_emails_to_notify(tuple(users_id_records))
-
-        emails_to_send = ""
-        for email in email_records:
-            emails_to_send += (f', {email[0]}')
-        email_utilities.send_out_of_stock_mail(emails_to_send, item_title)
-
-        # todo in dbqueries.check_users_for_out_of_stock_item the same as the target price
+        email_utilities.send_out_of_stock_mail(users_emails, item_title)
 
     def notify_target_price(self, users_id_records):
         """Notify users that item is at the target price."""
