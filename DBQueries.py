@@ -197,7 +197,7 @@ class DBQueries:
                     WHERE id in %s'''
         self.db.get_connection()
         with self.db.conn.cursor() as cur:
-            cur.execute(query, (item_id_list,))
+            cur.execute(query, (tuple(item_id_list),))
             self.db.conn.commit()
             logger.info(f"{cur.rowcount} rows affected.")
 
@@ -211,7 +211,7 @@ class DBQueries:
                     ORDER BY ui.item_id'''
         self.db.get_connection()
         with self.db.conn.cursor() as cur:
-            cur.execute(query, (item_id_list,))
+            cur.execute(query, (tuple(item_id_list),))
             logger.debug(f'Query is: {query}.')
             records = cur.fetchall()
             logger.info(f"{cur.rowcount} rows fetched.")
@@ -235,7 +235,7 @@ class DBQueries:
         self.db.get_connection()
         with self.db.conn.cursor() as cur:
             logger.debug(f'Query is: {query}.')
-            cur.execute(query, (users_id_list,))
+            cur.execute(query, (tuple(users_id_list),))
             records = cur.fetchall()
             logger.info(f"{cur.rowcount} rows fetched.")
         return records
@@ -250,7 +250,7 @@ class DBQueries:
                     GROUP BY i.title'''
         self.db.get_connection()
         with self.db.conn.cursor(cursor_factory = psycopg2.extras.NamedTupleCursor) as cur:
-            cur.execute(query, (items_id_list,))
+            cur.execute(query, (tuple(items_id_list),))
             logger.debug(f'Query is: {query}.')
             records = cur.fetchall()
             logger.info(f"{cur.rowcount} rows fetched.")
